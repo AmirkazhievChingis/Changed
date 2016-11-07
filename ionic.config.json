@@ -1,0 +1,10 @@
+{
+  "name": "OfflineMap",
+  "app_id": "",
+  "proxies": [
+    {
+      "path": "/api",
+      "proxyUrl": "http://eip.geoportal.kz/eip"
+    }
+  ]
+}
