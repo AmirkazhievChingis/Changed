@@ -30,6 +30,9 @@
         },
         "cordova-plugin-geolocation": {
             "PACKAGE_NAME": "com.maps.offline"
+        },
+        "cordova-plugin-camera": {
+            "PACKAGE_NAME": "com.maps.offline"
         }
     },
     "dependent_plugins": {

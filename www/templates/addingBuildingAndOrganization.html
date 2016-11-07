@@ -1,0 +1,44 @@
+<ion-view view-title="Добавить объект" scroll="false" data-tap-disabled="true">
+
+    <ion-content>
+
+        <ion-list>
+            <div ng-repeat="type in types">
+                <ion-item class="item-stable"
+                          ng-click="toggleType(type)"
+                          ng-class="{active: isTypeShown(type)}">
+                    <i class="icon" ng-class="isTypeShown(type) ? 'ion-minus' : 'ion-plus'"></i>
+                    &nbsp;
+                    {{type.name}}
+                </ion-item>
+                <ion-item class="item-accordion"
+                          ng-repeat="item in type.items"
+                          ng-show="isTypeShown(type)">
+                    {{item}}
+                </ion-item>
+            </div>
+        </ion-list>
+
+        <div class="list card">
+            <div class="item item-image">
+                <img ng-src="{{pictureUrl}}">
+            </div>
+        </div>
+        <div class="padding">
+            <button ng-click = "takePicture()" class="button button-block button-calm">Сделать фото объекта</button>
+            <button ng-click = "retrievePicture()" class="button button-block button-calm">Выбрать из галереи</button>
+        </div>
+
+
+
+        <label class="item item-input">
+            <span class="input-label">Введите название объекта</span>
+            <input type="text">
+        </label>
+
+
+
+    </ion-content>
+
+</ion-view>
+

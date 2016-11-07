@@ -3,7 +3,72 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
 .controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicPlatform) {
 
 })
-.controller('MapController', function($scope, $ionicPlatform, $cordovaFile, $cordovaFileTransfer, GeoLayer, $cordovaGeolocation, centerPoint,
+
+    .controller('AddController', function ($scope, $state, sharedPositionService, $cordovaCamera){
+
+        $scope.position = sharedPositionService.sharedPosition;
+
+        $scope.types = [];
+        $scope.types[0] = {name:"Выберите тип объекта", items: []};
+        $scope.types[0].items.push('тип 1', 'тип 2', 'тип 3');
+        console.log($scope.types);
+
+        $scope.toggleType = function(type) {
+            if ($scope.isTypeShown(type)) {
+                $scope.shownType = null;
+            } else {
+                $scope.shownType = type;
+            }
+        };
+        $scope.isTypeShown = function(type) {
+            return $scope.shownType === type;
+        };
+
+        alert("IN THIS POSITION WILL ADDED OBJECT " + $scope.position);
+        console.log("Position in Adding view");
+
+        //Adding picture
+        $scope.pictureUrl = 'http://placehold.it/100x100';
+        
+        $scope.takePicture = function () {
+            var options = {
+                quality: 50,
+                destinationType: Camera.DestinationType.DATA_URL,
+                sourceType: Camera.PictureSourceType.CAMERA,
+                allowEdit: true,
+                encodingType: Camera.EncodingType.JPEG,
+                targetWidth: 100,
+                targetHeight: 100,
+                popoverOptions: CameraPopoverOptions,
+                saveToPhotoAlbum: false,
+                correctOrientation:true
+            };
+            $cordovaCamera.getPicture(options)
+                .then(function (data) {
+                    $scope.pictureUrl = "data:image/jpeg;base64," + data;
+                    
+                }, function (error) {
+                    
+                });
+        };
+
+        $scope.retrievePicture = function () {
+            var options = {
+                destinationType: Camera.DestinationType.FILE_URI,
+                sourceType: Camera.PictureSourceType.PHOTOLIBRARY
+            };
+
+            $cordovaCamera.getPicture(options).then(function(data) {
+                $scope.pictureUrl = data;
+            }, function(err) {
+                alert("You can not retrieve photo");
+            });
+
+        }
+
+    })
+
+.controller('MapController', function($scope, $state, $ionicPlatform, sharedPositionService, $cordovaFile, $cordovaFileTransfer, GeoLayer, $cordovaGeolocation, centerPoint,
                                         southWestBound, northEastBound, transparent, fillColorLocationFound, colorLocationFound, tilesURL){
 
     $ionicPlatform.ready(function () {
@@ -20,6 +85,23 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
             });
 
             L.tileLayer(tilesURL, {}).addTo($scope.map);
+
+            //Adding object
+            $scope.map.on('contextmenu', function(e){
+
+                var result = confirm("Добавить на карту");
+                console.log("RESULT OF OBJECT ", result);
+                if(result){
+                    var position = e.latlng;
+                    sharedPositionService.sendPosition(position);
+                    console.log("POSITION IN MAPCONTROL " + position);
+                    $state.go('app.addBuildingAndOrganization');
+                }
+                else{
+                    alert("Объект не может быть добавлен на этой точке");
+                }
+
+            });
 
             jsonString = JSON.parse(jsonString);
 
@@ -148,6 +230,7 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
             }, function (error) {
                 console.log("Error outputing GeoInformation " + JSON.stringify(error));
             });
+
     });
 })
     .controller('BuildingsCtrl', function ($scope, Building) {
@@ -157,3 +240,6 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
     .controller('BuildingCtrl', function($scope, $stateParams, Building) {
         $scope.building = Building.get({buildingId: $stateParams.buildingId});
     });
+
+
+

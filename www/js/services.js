@@ -457,4 +457,16 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
     })
 .factory('Building', function ($resource, buildingsURL) {
     return $resource(buildingsURL);
-});
+})
+
+    .factory('sharedPositionService', function ($rootScope) {
+        var sharedPosition = {};
+        sharedPosition.sendPosition = function (position) {
+
+            this.sharedPosition = position;
+
+        };
+        console.log("POSITION IN SERVICE " + JSON.stringify(sharedPosition));
+        return sharedPosition;
+
+    });
