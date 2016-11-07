@@ -1,26 +1,25 @@
-angular.module('starter.controllers', ['ngCordova', 'starter.services'])
+angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter.constants'])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicPlatform) {
 
 })
-.controller('MapController', function($scope, $ionicPlatform, $cordovaFile, $cordovaFileTransfer, GeoLayer, $cordovaGeolocation){
+.controller('MapController', function($scope, $ionicPlatform, $cordovaFile, $cordovaFileTransfer, GeoLayer, $cordovaGeolocation, centerPoint,
+                                        southWestBound, northEastBound, transparent, fillColorLocationFound, colorLocationFound, tilesURL){
 
     $ionicPlatform.ready(function () {
 
         var initMap = function(jsonString){
 
             $scope.map = new L.Map('map', {
-                center: new L.LatLng(44.85278, 65.50917),
+                center: centerPoint,
                 attributionControl: true,
                 zoom: 12,
                 maxZoom: 18,
                 minZoom: 12,
-                maxBounds: new L.LatLngBounds(new L.LatLng(44.771862, 65.435981), //southWest
-                    new L.LatLng(44.896843, 65.581812) // northEast
-                )
+                maxBounds: new L.LatLngBounds(southWestBound, northEastBound)
             });
 
-            L.tileLayer('http://www.obl.kz/ArcGIS/rest/services/Topo_KZ_2016/MapServer/tile/{z}/{y}/{x}', {}).addTo($scope.map);
+            L.tileLayer(tilesURL, {}).addTo($scope.map);
 
             jsonString = JSON.parse(jsonString);
 
@@ -29,12 +28,16 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services'])
 
             jsonString.forEach(function (item) {
                 var object = item.geom;
-                var objectGeo;
 
                 if(object != null)
                 {
+                    console.log("TESTGEOPARSE " + JSON.stringify(item));
                     geoJsonObj += '{"type": "Feature","properties": {"title":"';
-                    geoJsonObj += item.name_ru;
+                    if(item.name_ru !== undefined) {
+                        geoJsonObj += item.name_ru;
+                    } else {
+                        geoJsonObj += item.this_is + " " + item.number;
+                    }
                     geoJsonObj += '"},';
                     geoJsonObj += '"geometry":' + item.geometry;
                     geoJsonObj += ',"popupTemplate": "{title}"';
@@ -48,13 +51,14 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services'])
 
             // console.log(geoJsonObj);
 
+            //TODO: НЕВЕРНО ПАРСИТ ИЗМЕНИТЬ ГАЛЫМ СФОРМИРУЕТ КОЛЛЕКЦИЮ!!!!
             geoJsonObj = JSON.parse(geoJsonObj);
 
             // console.log(geoJsonObj);
 
             var featuresLayer = new L.GeoJSON(geoJsonObj, {
                 style: function (feature) {
-                    return {color: 'rgba(0, 0, 0, 0)'};
+                    return {color: transparent};
                 },
                 onEachFeature: function(feature, marker) {
                     marker.bindPopup('<h4 style="color:#FFDD73">' + feature.properties.title +'</h4>');
@@ -74,7 +78,7 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services'])
             });
 
             searchControl.on('search:locationfound', function (e) {
-                e.layer.setStyle({fillColor: 'rgba(255, 1, 0, 0.7)', color: 'rgba(255, 1, 0, 0.7)'});
+                e.layer.setStyle({fillColor: fillColorLocationFound, color: colorLocationFound});
 
                 if(e.layer._popup)
                 {
@@ -108,7 +112,7 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services'])
                 onAdd: function (map) {
                     var container = L.DomUtil.create('button', 'leaflet-bar leaflet-control leaflet-control-custom ion-location');
 
-                    container.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+                    container.style.backgroundColor = transparent;
                     container.style.borderWidth = 0;
                     // container.style.backgroundImage = "url(img/Location.png)";
                     // container.style.backgroundSize = "30px 30px";
@@ -128,76 +132,22 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services'])
 
         GeoLayer.getGeoJsonDataFromFile()
             .then(function(data) {
-                $scope.geoJsonLayerString = data;
-                // console.log("!!!!!!!!!!!!!!!!  " + $scope.geoJsonLayerString + "    !!!!!!!!!!!!!!!!  ");
 
-                initMap($scope.geoJsonLayerString);
+                $scope.streets = data[data.length - 1].streets.substr(1, data[data.length - 1].streets.length - 2);
+                $scope.buildings = data[data.length - 1].buildings.substr(1, data[data.length - 1].buildings.length - 2);
+                $scope.orgs = data[data.length - 1].orgs.substr(1, data[data.length - 1].orgs.length - 2);
+
+                $scope.geoJsonLayerString = "[" + $scope.streets + "," + $scope.buildings + "," + $scope.orgs + "]";
+                console.log("!!!!!!!!!!!!!!!!  " + $scope.geoJsonLayerString + "    !!!!!!!!!!!!!!!!  ");
+
+                console.log("STREETSTEST" + $scope.streets);
+                console.log("BUILDINGSTEST" + $scope.buildings);
+                console.log("ORGSTEST" + $scope.orgs);
+
+                //initMap($scope.geoJsonLayerString);
             }, function (error) {
                 console.log("Error outputing GeoInformation " + JSON.stringify(error));
             });
-
-
-        //TODO:--------------------
-        // var url = 'https://github.com/stefanocudini/leaflet-search/archive/master.zip';
-        // var targetPath = cordova.file.dataDirectory + url.split("/").pop();
-        //
-        //     $cordovaFileTransfer.download(url, targetPath, {}, true)
-        //         .then(function (result) {
-        //         $scope.msg = 'Save file on '+targetPath+' success! ' + result.fullPath;
-        //
-        //             $cordovaZip
-        //                 .unzip(targetPath, cordova.file.dataDirectory + '/map')
-        //                 .then(function (file) {
-        //
-        //                     $scope.msg = 'success ' + " " + file;
-        //                 }, function () {
-        //
-        //                     $scope.msg = 'error';
-        //                 }, function (progress) {
-        //
-        //                     $scope.msg = (progress.loaded / progress.total) * 100;
-        //                 });
-        //
-        //     }, function (error) {
-        //         $scope.msg = 'Error Download file ';
-        //     }, function (progress) {
-        //         $scope.msg = (progress.loaded / progress.total) * 100;
-        //     });
-
-//         $scope.map = new L.Map('map', {
-//             center: new L.LatLng(44.85278, 65.50917),
-//             attributionControl: true,
-//             zoom: 12,
-//             maxZoom: 18,
-//             minZoom: 12//,
-//             // maxBounds: new L.LatLngBounds(new L.LatLng(44.771862, 65.435981), //southWest
-//             //     new L.LatLng(44.896843, 65.581812) // northEast
-//             //)
-//         });
-//
-//         L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo($scope.map);
-//
-//         var searchControl = new L.Control.Search({
-//             propertyName: 'title',
-//             circleLocation: false,
-//             moveToLocation: function (latlng, title, map) {
-//                 var zoom = map.getBoundsZoom(latlng.layer.getBounds());
-//                 map.setView(latlng, zoom);
-//             }
-//         });
-//
-//         searchControl.on('search:locationfound', function (e) {
-//             e.layer.setStyle({fillColor: 'rgba(255, 1, 0, 0.7)', color: 'rgba(255, 1, 0, 0.7)'});
-//
-//             if(e.layer._popup)
-//             {
-//                 e.layer.openPopup();
-//             }
-//         });
-//
-//         $scope.map.addControl(searchControl);
-/////////////
-        ////////////
     });
 })
     .controller('BuildingsCtrl', function ($scope, Building) {
