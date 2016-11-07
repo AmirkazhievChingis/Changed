@@ -68,8 +68,10 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
 
     })
 
-.controller('MapController', function($scope, $state, $ionicPlatform, sharedPositionService, $cordovaFile, $cordovaFileTransfer, GeoLayer, $cordovaGeolocation, centerPoint,
-                                        southWestBound, northEastBound, transparent, fillColorLocationFound, colorLocationFound, tilesURL){
+.controller('MapController', function($scope, $state, $ionicPlatform, sharedPositionService, $cordovaFile,
+                                      $cordovaFileTransfer, GeoLayer, $cordovaGeolocation, centerPoint,
+                                      southWestBound, northEastBound, transparent, Database,
+                                      fillColorLocationFound, colorLocationFound, tilesURL){
 
     $ionicPlatform.ready(function () {
 
@@ -84,132 +86,149 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
                 maxBounds: new L.LatLngBounds(southWestBound, northEastBound)
             });
 
-            L.tileLayer(tilesURL, {}).addTo($scope.map);
+            Database.openDB().then(function (db) {
 
-            //Adding object
-            $scope.map.on('contextmenu', function(e){
+                // L.tileLayer(tilesURL, {}).addTo($scope.map);
 
-                var result = confirm("Добавить на карту");
-                console.log("RESULT OF OBJECT ", result);
-                if(result){
-                    var position = e.latlng;
-                    sharedPositionService.sendPosition(position);
-                    console.log("POSITION IN MAPCONTROL " + position);
-                    $state.go('app.addBuildingAndOrganization');
-                }
-                else{
-                    alert("Объект не может быть добавлен на этой точке");
-                }
+                console.log("ASDASDASDASDASDASD " + JSON.stringify(db));
 
-            });
+                var mbTilesLayer = new L.TileLayer.MBTiles('',
+                    {
+                        tms: true,
+                        scheme: 'tms',
+                        unloadInvisibleTiles:true
+                    },  db);
 
-            jsonString = JSON.parse(jsonString);
+                mbTilesLayer.addTo($scope.map);
 
-            var geoJsonObj;
-            geoJsonObj = '{"type":"FeatureCollection", "features": [';
+                //Adding object
+                $scope.map.on('contextmenu', function(e){
 
-            jsonString.forEach(function (item) {
-                var object = item.geom;
-
-                if(object != null)
-                {
-                    console.log("TESTGEOPARSE " + JSON.stringify(item));
-                    geoJsonObj += '{"type": "Feature","properties": {"title":"';
-                    if(item.name_ru !== undefined) {
-                        geoJsonObj += item.name_ru;
-                    } else {
-                        geoJsonObj += item.this_is + " " + item.number;
+                    var result = confirm("Добавить на карту");
+                    console.log("RESULT OF OBJECT ", result);
+                    if(result){
+                        var position = e.latlng;
+                        sharedPositionService.sendPosition(position);
+                        console.log("POSITION IN MAPCONTROL " + position);
+                        $state.go('app.addBuildingAndOrganization');
                     }
-                    geoJsonObj += '"},';
-                    geoJsonObj += '"geometry":' + item.geometry;
-                    geoJsonObj += ',"popupTemplate": "{title}"';
-                    geoJsonObj += '},';
-                }
-            });
+                    else{
+                        alert("Объект не может быть добавлен на этой точке");
+                    }
 
-            geoJsonObj = geoJsonObj.substring(0, geoJsonObj.length - 1);
-
-            geoJsonObj += ']}';
-
-            // console.log(geoJsonObj);
-
-            //TODO: НЕВЕРНО ПАРСИТ ИЗМЕНИТЬ ГАЛЫМ СФОРМИРУЕТ КОЛЛЕКЦИЮ!!!!
-            geoJsonObj = JSON.parse(geoJsonObj);
-
-            // console.log(geoJsonObj);
-
-            var featuresLayer = new L.GeoJSON(geoJsonObj, {
-                style: function (feature) {
-                    return {color: transparent};
-                },
-                onEachFeature: function(feature, marker) {
-                    marker.bindPopup('<h4 style="color:#FFDD73">' + feature.properties.title +'</h4>');
-                }
-            });
-
-            $scope.map.addLayer(featuresLayer);
-
-            var searchControl = new L.Control.Search({
-                layer: featuresLayer,
-                propertyName: 'title',
-                circleLocation: false,
-                moveToLocation: function (latlng, title, map) {
-                    var zoom = map.getBoundsZoom(latlng.layer.getBounds());
-                    map.setView(latlng, zoom);
-                }
-            });
-
-            searchControl.on('search:locationfound', function (e) {
-                e.layer.setStyle({fillColor: fillColorLocationFound, color: colorLocationFound});
-
-                if(e.layer._popup)
-                {
-                    e.layer.openPopup();
-                }
-            }).on('search:collapsed', function (e) {
-                featuresLayer.eachLayer(function(layer) {
-                    featuresLayer.resetStyle(layer);
                 });
-            });
 
-            $scope.map.addControl(searchControl);
+                jsonString = JSON.parse(jsonString);
 
-            $scope.MyLocation = function() {
+                var geoJsonObj;
+                geoJsonObj = '{"type":"FeatureCollection", "features": [';
 
-                $cordovaGeolocation.watchPosition({timeout: 3000, enableHighAccuracy: false})
-                    .then(null, function (error) {
+                jsonString.forEach(function (item) {
+                    var object = item.geom;
 
-                        console.log("LOCATE ERROR    " + JSON.stringify(error));
-                    }, function (position) {
+                    if(object != null)
+                    {
+                        // console.log("TESTGEOPARSE " + JSON.stringify(item));
+                        geoJsonObj += '{"type": "Feature","properties": {"title":"';
+                        if(item.name_ru !== undefined) {
+                            geoJsonObj += item.name_ru;
+                        } else {
+                            geoJsonObj += item.this_is + " " + item.number;
+                        }
+                        geoJsonObj += '"},';
+                        geoJsonObj += '"geometry":' + item.geometry;
+                        geoJsonObj += ',"popupTemplate": "{title}"';
+                        geoJsonObj += '},';
+                    }
+                });
 
-                        $scope.map.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude));
+                geoJsonObj = geoJsonObj.substring(0, geoJsonObj.length - 1);
+
+                geoJsonObj += ']}';
+
+                // console.log(geoJsonObj);
+
+                //TODO: НЕВЕРНО ПАРСИТ ИЗМЕНИТЬ ГАЛЫМ СФОРМИРУЕТ КОЛЛЕКЦИЮ!!!!
+                geoJsonObj = JSON.parse(geoJsonObj);
+
+                // console.log(geoJsonObj);
+
+                var featuresLayer = new L.GeoJSON(geoJsonObj, {
+                    style: function (feature) {
+                        return {color: transparent};
+                    },
+                    onEachFeature: function(feature, marker) {
+                        marker.bindPopup('<h4 style="color:#FFDD73">' + feature.properties.title +'</h4>');
+                    }
+                });
+
+                $scope.map.addLayer(featuresLayer);
+
+                var searchControl = new L.Control.Search({
+                    layer: featuresLayer,
+                    propertyName: 'title',
+                    circleLocation: false,
+                    moveToLocation: function (latlng, title, map) {
+                        var zoom = map.getBoundsZoom(latlng.layer.getBounds());
+                        map.setView(latlng, zoom);
+                    }
+                });
+
+                searchControl.on('search:locationfound', function (e) {
+                    e.layer.setStyle({fillColor: fillColorLocationFound, color: colorLocationFound});
+
+                    if(e.layer._popup)
+                    {
+                        e.layer.openPopup();
+                    }
+                }).on('search:collapsed', function (e) {
+                    featuresLayer.eachLayer(function(layer) {
+                        featuresLayer.resetStyle(layer);
                     });
-            };
+                });
 
-            var customControl = L.Control.extend({
-                options: {
-                    position: 'bottomleft'
-                },
+                $scope.map.addControl(searchControl);
 
-                onAdd: function (map) {
-                    var container = L.DomUtil.create('button', 'leaflet-bar leaflet-control leaflet-control-custom ion-location');
+                $scope.MyLocation = function() {
 
-                    container.style.backgroundColor = transparent;
-                    container.style.borderWidth = 0;
-                    // container.style.backgroundImage = "url(img/Location.png)";
-                    // container.style.backgroundSize = "30px 30px";
-                    // container.style.width = '30px';
-                    // container.style.height = '30px';
+                    $cordovaGeolocation.watchPosition({timeout: 3000, enableHighAccuracy: false})
+                        .then(null, function (error) {
 
-                    container.onclick = function(){
-                        $scope.MyLocation();
-                    };
+                            console.log("LOCATE ERROR    " + JSON.stringify(error));
+                        }, function (position) {
 
-                    return container;
-                }
+                            $scope.map.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude));
+                        });
+                };
+
+                var customControl = L.Control.extend({
+                    options: {
+                        position: 'bottomleft'
+                    },
+
+                    onAdd: function (map) {
+                        var container = L.DomUtil.create('button', 'leaflet-bar leaflet-control leaflet-control-custom ion-location');
+
+                        container.style.backgroundColor = transparent;
+                        container.style.borderWidth = 0;
+                        // container.style.backgroundImage = "url(img/Location.png)";
+                        // container.style.backgroundSize = "30px 30px";
+                        // container.style.width = '30px';
+                        // container.style.height = '30px';
+
+                        container.onclick = function(){
+                            $scope.MyLocation();
+                        };
+
+                        return container;
+                    }
+                });
+
+                $scope.map.addControl(new customControl());
+            }, function (error) {
+
+                console.log("ERROR FETCHING DATABASE " + JSON.stringify(error));
             });
-
-            $scope.map.addControl(new customControl());
         };
 
         GeoLayer.getGeoJsonDataFromFile()

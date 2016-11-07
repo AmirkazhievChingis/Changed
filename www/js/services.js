@@ -251,7 +251,7 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
 
                                     console.log("Didn't find streets.json after finding whole directories " + JSON.stringify(error));
 
-                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'streets.json', true)
+                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'streets.json', false)
                                         .then(function (streetsFile) {
                                             console.log("File streets.json created " + JSON.stringify(streetsFile));
 
@@ -289,7 +289,7 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
 
                                     console.log("Didn't find buildings.json after finding whole directories " + JSON.stringify(error));
 
-                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'buildings.json', true)
+                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'buildings.json', false)
                                         .then(function (buildingsFile) {
                                             console.log("File buildings.json created " + JSON.stringify(buildingsFile));
 
@@ -327,7 +327,7 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
 
                                     console.log("Didn't find orgs.json after finding whole directories " + JSON.stringify(error));
 
-                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'orgs.json', true)
+                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'orgs.json', false)
                                         .then(function (orgsFile) {
                                             console.log("File orgs.json created " + JSON.stringify(orgsFile));
 
@@ -343,11 +343,11 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
 
                             console.log("Eror finding OfflineMap/mapsGeometry after finding OfflineMap " + JSON.stringify(error));
 
-                            $cordovaFile.createDir(cordova.file.dataDirectory + 'OfflineMap', 'mapsGeometry', true)
+                            $cordovaFile.createDir(cordova.file.dataDirectory + 'OfflineMap', 'mapsGeometry', false)
                                 .then(function (geomDirectory) {
                                     console.log("successful created dir OfflineMap/mapsGeometry " + JSON.stringify(geomDirectory));
 
-                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'streets.json', true)
+                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'streets.json', false)
                                         .then(function (streetsFile) {
                                             console.log("File streets.json created " + JSON.stringify(streetsFile));
 
@@ -358,7 +358,7 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
                                             deferred_streets.reject("Error creating streets.json file " + JSON.stringify(error));
                                         });
 
-                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'buildings.json', true)
+                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'buildings.json', false)
                                         .then(function (buildingsFile) {
                                             console.log("File created buildings.json " + JSON.stringify(buildingsFile));
 
@@ -369,7 +369,7 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
                                             deferred_buildings.reject("Error creating buildings.json file " + JSON.stringify(error));
                                         });
 
-                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'orgs.json', true)
+                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'orgs.json', false)
                                         .then(function (orgsFile) {
                                             console.log("File created orgs.json " + JSON.stringify(orgsFile));
 
@@ -390,16 +390,16 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
                 }, function (error) {
                     console.log(JSON.stringify(error));
 
-                    $cordovaFile.createDir(cordova.file.dataDirectory, 'OfflineMap', true)
+                    $cordovaFile.createDir(cordova.file.dataDirectory, 'OfflineMap', false)
                         .then(function (directory) {
 
                             console.log("successful created dir OfflineMap " + JSON.stringify(directory));
 
-                            $cordovaFile.createDir(cordova.file.dataDirectory + 'OfflineMap', 'mapsGeometry', true)
+                            $cordovaFile.createDir(cordova.file.dataDirectory + 'OfflineMap', 'mapsGeometry', false)
                                 .then(function (geomDirectory) {
                                     console.log("successful created dir OfflineMap/mapsGeometry " + JSON.stringify(geomDirectory));
 
-                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'streets.json', true)
+                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'streets.json', false)
                                         .then(function (streetsFile) {
                                             console.log("File streets.json created " + JSON.stringify(streetsFile));
 
@@ -410,7 +410,7 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
                                             deferred_streets.reject("Error creating streets.json file " + JSON.stringify(error));
                                         });
 
-                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'buildings.json', true)
+                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'buildings.json', false)
                                         .then(function (buildingsFile) {
                                             console.log("File created buildings.json " + JSON.stringify(buildingsFile));
 
@@ -421,7 +421,7 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
                                             deferred_buildings.reject("Error creating buildings.json file " + JSON.stringify(error));
                                         });
 
-                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'orgs.json', true)
+                                    $cordovaFile.createFile(cordova.file.dataDirectory + 'OfflineMap/mapsGeometry', 'orgs.json', false)
                                         .then(function (orgsFile) {
                                             console.log("File created orgs.json " + JSON.stringify(orgsFile));
 
@@ -469,4 +469,120 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
         console.log("POSITION IN SERVICE " + JSON.stringify(sharedPosition));
         return sharedPosition;
 
+    })
+    .factory('Database', function ($q, $cordovaSQLite, $cordovaFile, $cordovaFileTransfer, mapDB, mbTilesURL) {
+
+        var openDB = function () {
+
+            var deferred = $q.defer();
+
+            $cordovaFile.checkDir(cordova.file.applicationStorageDirectory, "databases")
+                .then(function (dbDir) {
+
+                    console.log("We found database directory " + JSON.stringify(dbDir));
+
+                    $cordovaFile.checkFile(dbDir.nativeURL, mapDB)
+                        .then(function (tilesFile) {
+
+                            console.log("We found database file " + JSON.stringify(tilesFile));
+
+                            var db;
+
+                            //TODO:  "Uncaught TypeError: this._getWrapTileNum is not a function", source: file:///android_asset/www/lib/leaflet/TileLayer.MBTiles.js (17)
+
+
+                            if(db = $cordovaSQLite.openDB({name: tilesFile.name, location: 'default'}))
+                            {
+
+                                console.log("DATABASE created SUCCESSFULLY " + JSON.stringify(db));
+                                deferred.resolve(db);
+                            } else {
+
+                                console.log("COULDN'T OPEN DATABASE");
+                                deferred.reject("COULDN'T OPEN DATABASE");
+                            }
+                        }, function (error) {
+
+                            console.log("COULDN'T FIND A FILE " + JSON.stringify(error));
+
+                            $cordovaFileTransfer.download(mbTilesURL, cordova.file.applicationStorageDirectory + '/databases/' + mapDB, {}, true)
+                                .then(function (result) {
+
+                                    console.log('Save database file succeeded ' + JSON.stringify(result));
+
+                                    var db;
+
+                                    if(db = $cordovaSQLite.openDB({name: result.name, location: 'default'}))
+                                    {
+
+                                        console.log("DATABASE CREATED " + JSON.stringify(result));
+                                        console.log("DATABASE_SUCCESS " + JSON.stringify(db));
+
+                                        deferred.resolve(db);
+                                    }else {
+
+                                        console.log("ERROR DATABASE CREATING");
+                                        deferred.reject("ERROR DATABASE CREATING");
+                                    }
+
+                                }, function (error) {
+
+                                    console.log("ERROR_DOWNLOADING " + JSON.stringify(error));
+                                    deferred.reject("ERROR_DOWNLOADING " + JSON.stringify(error));
+                                }, function (progress) {
+                                    $scope.downloadProgress = (progress.loaded / progress.total) * 100;
+                                    console.log(JSON.stringify($scope.downloadProgress));
+                                });
+                        });
+
+                }, function (error) {
+
+                    console.log("We couldn't find database Directory creating a new one " + JSON.stringify(error));
+
+                    $cordovaFile.createDir(cordova.file.applicationStorageDirectory, 'databases', false)
+                        .then(function (databasesDir) {
+
+                            console.log("SUCCESSFULLY CREATED DATABASES DIRECTORY " + JSON.stringify(databasesDir));
+
+                            $cordovaFileTransfer.download(mbTilesURL, databasesDir.nativeURL + '/' + mapDB, {}, true)
+                                .then(function (result) {
+
+                                    console.log('Save database file succeeded ' + JSON.stringify(result));
+
+                                    var db;
+
+                                    if(db = $cordovaSQLite.openDB({name: result.name, location: 'default'}))
+                                    {
+
+                                        console.log("DATABASE CREATED " + JSON.stringify(result));
+                                        console.log("DATABASE_SUCCESS " + JSON.stringify(db));
+
+                                        deferred.resolve(db);
+                                    }else {
+
+                                        console.log("ERROR DATABASE CREATING");
+                                        deferred.reject("ERROR DATABASE CREATING");
+                                    }
+
+                                }, function (error) {
+
+                                    console.log("ERROR_DOWNLOADING " + JSON.stringify(error));
+                                    deferred.reject("ERROR_DOWNLOADING " + JSON.stringify(error));
+                                }, function (progress) {
+                                    $scope.downloadProgress = (progress.loaded / progress.total) * 100;
+                                    console.log(JSON.stringify($scope.downloadProgress));
+                                });
+                        }, function (error) {
+
+                            console.log("ERROR CREATING DATABASES DIRECTORY " + JSON.stringify(error));
+                            deferred.reject("ERROR CREATING DATABASES DIRECTORY " + JSON.stringify(error));
+                        });
+                });
+
+            return deferred.promise;
+        };
+
+        return {
+            openDB: openDB
+        }
     });

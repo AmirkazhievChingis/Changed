@@ -33,6 +33,12 @@
         },
         "cordova-plugin-camera": {
             "PACKAGE_NAME": "com.maps.offline"
+        },
+        "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "com.maps.offline"
+        },
+        "cordova-sqlite-storage": {
+            "PACKAGE_NAME": "com.maps.offline"
         }
     },
     "dependent_plugins": {
