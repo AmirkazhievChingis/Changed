@@ -144,7 +144,7 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
                 console.log("BUILDINGSTEST" + $scope.buildings);
                 console.log("ORGSTEST" + $scope.orgs);
 
-                //initMap($scope.geoJsonLayerString);
+                initMap($scope.geoJsonLayerString);
             }, function (error) {
                 console.log("Error outputing GeoInformation " + JSON.stringify(error));
             });
