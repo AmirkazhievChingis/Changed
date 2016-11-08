@@ -486,21 +486,8 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
 
                             console.log("We found database file " + JSON.stringify(tilesFile));
 
-                            var db;
+                            deferred.resolve(tilesFile.name);
 
-                            //TODO:  "Uncaught TypeError: this._getWrapTileNum is not a function", source: file:///android_asset/www/lib/leaflet/TileLayer.MBTiles.js (17)
-
-
-                            if(db = $cordovaSQLite.openDB({name: tilesFile.name, location: 'default'}))
-                            {
-
-                                console.log("DATABASE created SUCCESSFULLY " + JSON.stringify(db));
-                                deferred.resolve(db);
-                            } else {
-
-                                console.log("COULDN'T OPEN DATABASE");
-                                deferred.reject("COULDN'T OPEN DATABASE");
-                            }
                         }, function (error) {
 
                             console.log("COULDN'T FIND A FILE " + JSON.stringify(error));
@@ -510,20 +497,22 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
 
                                     console.log('Save database file succeeded ' + JSON.stringify(result));
 
-                                    var db;
+                                    deferred.resolve(result.name);
 
-                                    if(db = $cordovaSQLite.openDB({name: result.name, location: 'default'}))
-                                    {
-
-                                        console.log("DATABASE CREATED " + JSON.stringify(result));
-                                        console.log("DATABASE_SUCCESS " + JSON.stringify(db));
-
-                                        deferred.resolve(db);
-                                    }else {
-
-                                        console.log("ERROR DATABASE CREATING");
-                                        deferred.reject("ERROR DATABASE CREATING");
-                                    }
+                                    // var db;
+                                    //
+                                    // if(db = $cordovaSQLite.openDB({name: result.name, location: 'default'}))
+                                    // {
+                                    //
+                                    //     console.log("DATABASE CREATED " + JSON.stringify(result));
+                                    //     console.log("DATABASE_SUCCESS " + JSON.stringify(db));
+                                    //
+                                    //     deferred.resolve(db);
+                                    // }else {
+                                    //
+                                    //     console.log("ERROR DATABASE CREATING");
+                                    //     deferred.reject("ERROR DATABASE CREATING");
+                                    // }
 
                                 }, function (error) {
 
@@ -549,28 +538,30 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
 
                                     console.log('Save database file succeeded ' + JSON.stringify(result));
 
-                                    var db;
+                                    deferred.resolve(result.name);
 
-                                    if(db = $cordovaSQLite.openDB({name: result.name, location: 'default'}))
-                                    {
-
-                                        console.log("DATABASE CREATED " + JSON.stringify(result));
-                                        console.log("DATABASE_SUCCESS " + JSON.stringify(db));
-
-                                        deferred.resolve(db);
-                                    }else {
-
-                                        console.log("ERROR DATABASE CREATING");
-                                        deferred.reject("ERROR DATABASE CREATING");
-                                    }
+                                    // var db;
+                                    //
+                                    // if(db = $cordovaSQLite.openDB({name: result.name, location: 'default'}))
+                                    // {
+                                    //
+                                    //     console.log("DATABASE CREATED " + JSON.stringify(result));
+                                    //     console.log("DATABASE_SUCCESS " + JSON.stringify(db));
+                                    //
+                                    //     deferred.resolve(db);
+                                    // }else {
+                                    //
+                                    //     console.log("ERROR DATABASE CREATING");
+                                    //     deferred.reject("ERROR DATABASE CREATING");
+                                    // }
 
                                 }, function (error) {
 
                                     console.log("ERROR_DOWNLOADING " + JSON.stringify(error));
                                     deferred.reject("ERROR_DOWNLOADING " + JSON.stringify(error));
                                 }, function (progress) {
-                                    $scope.downloadProgress = (progress.loaded / progress.total) * 100;
-                                    console.log(JSON.stringify($scope.downloadProgress));
+                                    //downloadProgress = (progress.loaded / progress.total) * 100;
+                                    console.log("DOWNLOAD_PROGRESS " + JSON.stringify(progress));
                                 });
                         }, function (error) {
 

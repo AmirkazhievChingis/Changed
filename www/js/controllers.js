@@ -70,7 +70,7 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
 
 .controller('MapController', function($scope, $state, $ionicPlatform, sharedPositionService, $cordovaFile,
                                       $cordovaFileTransfer, GeoLayer, $cordovaGeolocation, centerPoint,
-                                      southWestBound, northEastBound, transparent, Database,
+                                      southWestBound, northEastBound, transparent, Database, mapDB,
                                       fillColorLocationFound, colorLocationFound, tilesURL){
 
     $ionicPlatform.ready(function () {
@@ -86,20 +86,37 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
                 maxBounds: new L.LatLngBounds(southWestBound, northEastBound)
             });
 
-            Database.openDB().then(function (db) {
+            Database.openDB().then(function (DBName) {
 
                 // L.tileLayer(tilesURL, {}).addTo($scope.map);
 
-                console.log("ASDASDASDASDASDASD " + JSON.stringify(db));
+                console.log("ASDASDASDASDASDASD " + JSON.stringify(DBName));
 
-                var mbTilesLayer = new L.TileLayer.MBTiles('',
-                    {
-                        tms: true,
-                        scheme: 'tms',
-                        unloadInvisibleTiles:true
-                    },  db);
+                var dbOptions = {};
 
-                mbTilesLayer.addTo($scope.map);
+                if (ionic.Platform.isAndroid()) {
+                    dbOptions = {name: DBName, createFromLocation: 1, location: 'default', androidDatabaseImplementation: 2, androidLockWorkaround: 1};
+                }
+                else {
+                    dbOptions = {name: DBName, createFromLocation: 1};
+                }
+
+                var db = window.sqlitePlugin.openDatabase(dbOptions, function(db) {
+                    db.transaction(function(tx) {
+                        console.log("transaction: " + JSON.stringify(tx));
+
+                        var MBTilesLayer = new L.TileLayer.MBTiles('',
+                            {
+                                tms: true,
+                                scheme: 'tms',
+                                unloadInvisibleTiles:true
+                            },  db);
+
+                        MBTilesLayer.addTo($scope.map);
+
+                        console.log("end of build map");
+                    });
+                });
 
                 //Adding object
                 $scope.map.on('contextmenu', function(e){
