@@ -8,22 +8,10 @@
     },
     "installed_plugins": {
         "cordova-plugin-console": {
-            "PACKAGE_NAME": "com.ionicframework.offlinemap866530"
+            "PACKAGE_NAME": "com.maps.offline"
         },
         "cordova-plugin-device": {
-            "PACKAGE_NAME": "com.ionicframework.offlinemap866530"
-        },
-        "cordova-plugin-splashscreen": {
-            "PACKAGE_NAME": "com.ionicframework.offlinemap866530"
-        },
-        "cordova-plugin-statusbar": {
-            "PACKAGE_NAME": "com.ionicframework.offlinemap866530"
-        },
-        "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "com.ionicframework.offlinemap866530"
-        },
-        "ionic-plugin-keyboard": {
-            "PACKAGE_NAME": "com.ionicframework.offlinemap866530"
+            "PACKAGE_NAME": "com.maps.offline"
         },
         "cordova-plugin-file": {
             "PACKAGE_NAME": "com.maps.offline"
@@ -31,13 +19,16 @@
         "cordova-plugin-geolocation": {
             "PACKAGE_NAME": "com.maps.offline"
         },
-        "cordova-plugin-camera": {
+        "cordova-plugin-splashscreen": {
             "PACKAGE_NAME": "com.maps.offline"
         },
-        "cordova-plugin-file-transfer": {
+        "cordova-plugin-statusbar": {
             "PACKAGE_NAME": "com.maps.offline"
         },
-        "cordova-sqlite-storage": {
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.maps.offline"
+        },
+        "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "com.maps.offline"
         }
     },
