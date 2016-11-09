@@ -20,9 +20,27 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
                 $scope.shownType = type;
             }
         };
+
         $scope.isTypeShown = function(type) {
             return $scope.shownType === type;
         };
+
+      $scope.kinds = [];
+      $scope.kinds[0] = {name:"Выберите вид объекта", items: []};
+      $scope.kinds[0].items.push('вид 1', 'вид 2', 'вид 3');
+      console.log($scope.kinds);
+
+      $scope.toggleKind = function(kind) {
+        if ($scope.isKindShown(kind)) {
+          $scope.shownKind = null;
+        } else {
+          $scope.shownKind = kind;
+        }
+      };
+      $scope.isKindShown = function(kind) {
+        console.log("SHOWN KIND", $scope.shownKind);
+        return $scope.shownKind === kind;
+      };
 
         alert("IN THIS POSITION WILL ADDED OBJECT " + $scope.position);
         console.log("Position in Adding view");
@@ -206,6 +224,7 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
 
                 $scope.map.addControl(searchControl);
 
+              //GEOPOSITION
                 $scope.MyLocation = function() {
 
                     $cordovaGeolocation.watchPosition({timeout: 3000, enableHighAccuracy: false})
