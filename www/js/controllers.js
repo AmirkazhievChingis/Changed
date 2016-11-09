@@ -86,37 +86,37 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
                 maxBounds: new L.LatLngBounds(southWestBound, northEastBound)
             });
 
-            Database.openDB().then(function (DBName) {
+            // Database.openDB().then(function (DBName) {
 
-                // L.tileLayer(tilesURL, {}).addTo($scope.map);
+                L.tileLayer(tilesURL, {}).addTo($scope.map);
 
-                console.log("ASDASDASDASDASDASD " + JSON.stringify(DBName));
-
-                var dbOptions = {};
-
-                if (ionic.Platform.isAndroid()) {
-                    dbOptions = {name: DBName, createFromLocation: 1, location: 'default', androidDatabaseImplementation: 2, androidLockWorkaround: 1};
-                }
-                else {
-                    dbOptions = {name: DBName, createFromLocation: 1};
-                }
-
-                var db = window.sqlitePlugin.openDatabase(dbOptions, function(db) {
-                    db.transaction(function(tx) {
-                        console.log("transaction: " + JSON.stringify(tx));
-
-                        var MBTilesLayer = new L.TileLayer.MBTiles('',
-                            {
-                                tms: true,
-                                scheme: 'tms',
-                                unloadInvisibleTiles:true
-                            },  db);
-
-                        MBTilesLayer.addTo($scope.map);
-
-                        console.log("end of build map");
-                    });
-                });
+                // console.log("ASDASDASDASDASDASD " + JSON.stringify(DBName));
+                //
+                // var dbOptions = {};
+                //
+                // if (ionic.Platform.isAndroid()) {
+                //     dbOptions = {name: DBName, createFromLocation: 1, location: 'default', androidDatabaseImplementation: 2, androidLockWorkaround: 1};
+                // }
+                // else {
+                //     dbOptions = {name: DBName, createFromLocation: 1};
+                // }
+                //
+                // var db = window.sqlitePlugin.openDatabase(dbOptions, function(db) {
+                //     db.transaction(function(tx) {
+                //         console.log("transaction: " + JSON.stringify(tx));
+                //
+                //         var MBTilesLayer = new L.TileLayer.MBTiles('',
+                //             {
+                //                 tms: true,
+                //                 scheme: 'tms',
+                //                 unloadInvisibleTiles:true
+                //             },  db);
+                //
+                //         MBTilesLayer.addTo($scope.map);
+                //
+                //         console.log("end of build map");
+                //     });
+                // });
 
                 //Adding object
                 $scope.map.on('contextmenu', function(e){
@@ -242,10 +242,10 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
                 });
 
                 $scope.map.addControl(new customControl());
-            }, function (error) {
-
-                console.log("ERROR FETCHING DATABASE " + JSON.stringify(error));
-            });
+            // }, function (error) {
+            //
+            //     console.log("ERROR FETCHING DATABASE " + JSON.stringify(error));
+            // });
         };
 
         GeoLayer.getGeoJsonDataFromFile()
