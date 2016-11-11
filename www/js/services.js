@@ -3,7 +3,7 @@
  */
 angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constants'])
 
-    .factory('GeoLayer', function ($timeout, $q, $http, GeoApiService, $cordovaFile, streetsURL, buildingsURL, orgsURL) {
+    .factory('GeoLayer', function ($timeout, $q, $http, GeoApiService, $cordovaFile, streetsURLTest, buildingsURLTest, orgsURLTest) {
 
         var jsonObj = {
             streets: "",
@@ -15,17 +15,17 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
 
         var getHttpGeoJsonStreets = function() {
 
-            return $http.get(streetsURL);
+            return $http.get(streetsURLTest);
         };
 
         var getHttpGeoJsonBuildings = function() {
 
-            return $http.get(buildingsURL);
+            return $http.get(buildingsURLTest);
         };
 
         var getHttpGeoJsonOrgs = function() {
 
-            return $http.get(orgsURL);
+            return $http.get(orgsURLTest);
         };
 
         var getStreets = function(streetsFile, deferred) {
@@ -455,8 +455,8 @@ angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constant
             getGeoJsonDataFromFile: getGeoJsonDataFromFile
         }
     })
-.factory('Building', function ($resource, buildingsURL) {
-    return $resource(buildingsURL);
+.factory('Building', function ($resource, buildingsURLTest) {
+    return $resource(buildingsURLTest);
 })
 
     .factory('sharedPositionService', function ($rootScope) {

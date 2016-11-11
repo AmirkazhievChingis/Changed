@@ -17,17 +17,17 @@ L.TileLayer.MBTiles = L.TileLayer.extend({
 		var limit = this._getWrapTileNum();
 		var x = tilePoint.x;
 		var y = limit - tilePoint.y - 1;
-		console.log('get tile [z, x ,y]' + '[' + z + ',' + x + ',' + y + ']');
+		// console.log('get tile [z, x ,y]' + '[' + z + ',' + x + ',' + y + ']');
 
 		var base64Prefix = 'data:image/gif;base64,';
 
 		this.mbTilesDB.executeSql("SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?", [z, x, y], function (res) {
-			console.log("success query");
+			// console.log("success query");
 			//tile.src = base64Prefix + res.rows[0].tile_data;
 			//var tmpTile = base64Prefix + res.rows.item(0).tile_data;
 			tile.src = base64Prefix + res.rows.item(0).tile_data;
-			console.log('tile.src: ['+tile.src+']');
-			console.log('tmpTile: ['+tmpTile+']');
+			// console.log('tile.src: ['+tile.src+']');
+			// console.log('tmpTile: ['+tmpTile+']');
 		}, function (er) {
 			console.log('error with executeSql', er);
 		});
