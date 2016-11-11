@@ -1,0 +1,9 @@
+<ion-modal-view>
+    <ion-content>
+        <ion-list>
+            <ion-item ng-repeat="object in searchGeoObjs | filter:searchQuery">
+                {{object.name}}
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-modal-view>
