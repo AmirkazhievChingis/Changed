@@ -1,7 +1,7 @@
 angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter.constants'])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout, $ionicPlatform) {
-
+    $scope.searchQuery = "";
 })
 
     .controller('AddController', function ($scope, $state, sharedPositionService, $cordovaCamera){
@@ -20,9 +20,27 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
                 $scope.shownType = type;
             }
         };
+
         $scope.isTypeShown = function(type) {
             return $scope.shownType === type;
         };
+
+      $scope.kinds = [];
+      $scope.kinds[0] = {name:"Выберите вид объекта", items: []};
+      $scope.kinds[0].items.push('вид 1', 'вид 2', 'вид 3');
+      console.log($scope.kinds);
+
+      $scope.toggleKind = function(kind) {
+        if ($scope.isKindShown(kind)) {
+          $scope.shownKind = null;
+        } else {
+          $scope.shownKind = kind;
+        }
+      };
+      $scope.isKindShown = function(kind) {
+        console.log("SHOWN KIND", $scope.shownKind);
+        return $scope.shownKind === kind;
+      };
 
         alert("IN THIS POSITION WILL ADDED OBJECT " + $scope.position);
         console.log("Position in Adding view");
@@ -70,10 +88,18 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
 
 .controller('MapController', function($scope, $state, $ionicPlatform, sharedPositionService, $cordovaFile,
                                       $cordovaFileTransfer, GeoLayer, $cordovaGeolocation, centerPoint,
-                                      southWestBound, northEastBound, transparent, Database,
-                                      fillColorLocationFound, colorLocationFound, tilesURL){
+                                      southWestBound, northEastBound, transparent, Database, mapDB,
+                                      fillColorLocationFound, colorLocationFound, tilesURL, $ionicModal){
 
     $ionicPlatform.ready(function () {
+
+        ////MODAL BEGIN////////
+        $ionicModal.fromTemplateUrl('templates/searchModal.html', {
+            scope: $scope
+        }).then(function(modal) {
+            $scope.modal = modal;
+        });
+        ///MODAL END/////
 
         var initMap = function(jsonString){
 
@@ -86,20 +112,37 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
                 maxBounds: new L.LatLngBounds(southWestBound, northEastBound)
             });
 
-            Database.openDB().then(function (db) {
+            // Database.openDB().then(function (DBName) {
 
-                // L.tileLayer(tilesURL, {}).addTo($scope.map);
+                L.tileLayer(tilesURL, {}).addTo($scope.map);
 
-                console.log("ASDASDASDASDASDASD " + JSON.stringify(db));
-
-                var mbTilesLayer = new L.TileLayer.MBTiles('',
-                    {
-                        tms: true,
-                        scheme: 'tms',
-                        unloadInvisibleTiles:true
-                    },  db);
-
-                mbTilesLayer.addTo($scope.map);
+                // console.log("ASDASDASDASDASDASD " + JSON.stringify(DBName));
+                //
+                // var dbOptions = {};
+                //
+                // if (ionic.Platform.isAndroid()) {
+                //     dbOptions = {name: DBName, createFromLocation: 1, location: 'default', androidDatabaseImplementation: 2, androidLockWorkaround: 1};
+                // }
+                // else {
+                //     dbOptions = {name: DBName, createFromLocation: 1};
+                // }
+                //
+                // var db = window.sqlitePlugin.openDatabase(dbOptions, function(db) {
+                //     db.transaction(function(tx) {
+                //         console.log("transaction: " + JSON.stringify(tx));
+                //
+                //         var MBTilesLayer = new L.TileLayer.MBTiles('',
+                //             {
+                //                 tms: true,
+                //                 scheme: 'tms',
+                //                 unloadInvisibleTiles:true
+                //             },  db);
+                //
+                //         MBTilesLayer.addTo($scope.map);
+                //
+                //         console.log("end of build map");
+                //     });
+                // });
 
                 //Adding object
                 $scope.map.on('contextmenu', function(e){
@@ -120,75 +163,93 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
 
                 jsonString = JSON.parse(jsonString);
 
-                var geoJsonObj;
-                geoJsonObj = '{"type":"FeatureCollection", "features": [';
+                $scope.searchGeoObjs = [];
 
                 jsonString.forEach(function (item) {
-                    var object = item.geom;
 
-                    if(object != null)
-                    {
-                        // console.log("TESTGEOPARSE " + JSON.stringify(item));
-                        geoJsonObj += '{"type": "Feature","properties": {"title":"';
-                        if(item.name_ru !== undefined) {
-                            geoJsonObj += item.name_ru;
-                        } else {
-                            geoJsonObj += item.this_is + " " + item.number;
-                        }
-                        geoJsonObj += '"},';
-                        geoJsonObj += '"geometry":' + item.geometry;
-                        geoJsonObj += ',"popupTemplate": "{title}"';
-                        geoJsonObj += '},';
+                    var geomObj = item.geom;
+
+                    if(geomObj != null) {
+
+                        var object = {
+                            name: item.name_ru,
+                            geometry: item.geometry
+                        };
+
+                        $scope.searchGeoObjs.push(object);
                     }
                 });
 
-                geoJsonObj = geoJsonObj.substring(0, geoJsonObj.length - 1);
-
-                geoJsonObj += ']}';
+                // var geoJsonObj;
+                // geoJsonObj = '{"type":"FeatureCollection", "features": [';
+                //
+                // jsonString.forEach(function (item) {
+                //     var object = item.geom;
+                //
+                //     if(object != null)
+                //     {
+                //         // console.log("TESTGEOPARSE " + JSON.stringify(item));
+                //         geoJsonObj += '{"type": "Feature","properties": {"title":"';
+                //         if(item.name_ru !== undefined) {
+                //             geoJsonObj += item.name_ru;
+                //         } else {
+                //             geoJsonObj += item.this_is + " " + item.number;
+                //         }
+                //         geoJsonObj += '"},';
+                //         geoJsonObj += '"geometry":' + item.geometry;
+                //         geoJsonObj += ',"popupTemplate": "{title}"';
+                //         geoJsonObj += '},';
+                //     }
+                // });
+                //
+                // geoJsonObj = geoJsonObj.substring(0, geoJsonObj.length - 1);
+                //
+                // geoJsonObj += ']}';
 
                 // console.log(geoJsonObj);
 
                 //TODO: НЕВЕРНО ПАРСИТ ИЗМЕНИТЬ ГАЛЫМ СФОРМИРУЕТ КОЛЛЕКЦИЮ!!!!
-                geoJsonObj = JSON.parse(geoJsonObj);
+                // geoJsonObj = JSON.parse(geoJsonObj);
 
                 // console.log(geoJsonObj);
 
-                var featuresLayer = new L.GeoJSON(geoJsonObj, {
-                    style: function (feature) {
-                        return {color: transparent};
-                    },
-                    onEachFeature: function(feature, marker) {
-                        marker.bindPopup('<h4 style="color:#FFDD73">' + feature.properties.title +'</h4>');
-                    }
-                });
+                // var featuresLayer = new L.GeoJSON(geoJsonObj, {
+                //     style: function (feature) {
+                //         return {color: transparent};
+                //     },
+                //     onEachFeature: function(feature, marker) {
+                //         marker.bindPopup('<h4 style="color:#FFDD73">' + feature.properties.title +'</h4>');
+                //     }
+                // });
 
-                $scope.map.addLayer(featuresLayer);
+                // $scope.map.addLayer(featuresLayer);
 
-                var searchControl = new L.Control.Search({
-                    layer: featuresLayer,
-                    propertyName: 'title',
-                    circleLocation: false,
-                    moveToLocation: function (latlng, title, map) {
-                        var zoom = map.getBoundsZoom(latlng.layer.getBounds());
-                        map.setView(latlng, zoom);
-                    }
-                });
+                // var searchControl = new L.Control.Search({
+                //     layer: featuresLayer,
+                //     propertyName: 'title',
+                //     circleLocation: false,
+                //     moveToLocation: function (latlng, title, map) {
+                //         var zoom = map.getBoundsZoom(latlng.layer.getBounds());
+                //         map.setView(latlng, zoom);
+                //     }
+                // });
 
-                searchControl.on('search:locationfound', function (e) {
-                    e.layer.setStyle({fillColor: fillColorLocationFound, color: colorLocationFound});
+                // searchControl.on('search:locationfound', function (e) {
+                //     e.layer.setStyle({fillColor: fillColorLocationFound, color: colorLocationFound});
+                //
+                //     if(e.layer._popup)
+                //     {
+                //         e.layer.openPopup();
+                //     }
+                // }).on('search:collapsed', function (e) {
+                //     featuresLayer.eachLayer(function(layer) {
+                //         featuresLayer.resetStyle(layer);
+                //     });
+                // });
 
-                    if(e.layer._popup)
-                    {
-                        e.layer.openPopup();
-                    }
-                }).on('search:collapsed', function (e) {
-                    featuresLayer.eachLayer(function(layer) {
-                        featuresLayer.resetStyle(layer);
-                    });
-                });
+                // $scope.map.addControl(searchControl);
 
-                $scope.map.addControl(searchControl);
-
+              //GEOPOSITION
                 $scope.MyLocation = function() {
 
                     $cordovaGeolocation.watchPosition({timeout: 3000, enableHighAccuracy: false})
@@ -225,25 +286,28 @@ angular.module('starter.controllers', ['ngCordova', 'starter.services', 'starter
                 });
 
                 $scope.map.addControl(new customControl());
-            }, function (error) {
-
-                console.log("ERROR FETCHING DATABASE " + JSON.stringify(error));
-            });
+            // }, function (error) {
+            //
+            //     console.log("ERROR FETCHING DATABASE " + JSON.stringify(error));
+            // });
         };
 
         GeoLayer.getGeoJsonDataFromFile()
             .then(function(data) {
 
-                $scope.streets = data[data.length - 1].streets.substr(1, data[data.length - 1].streets.length - 2);
-                $scope.buildings = data[data.length - 1].buildings.substr(1, data[data.length - 1].buildings.length - 2);
-                $scope.orgs = data[data.length - 1].orgs.substr(1, data[data.length - 1].orgs.length - 2);
+                // $scope.streets = data[data.length - 1].streets.substr(1, data[data.length - 1].streets.length - 2);
+                // $scope.buildings = data[data.length - 1].buildings.substr(1, data[data.length - 1].buildings.length - 2);
+                // $scope.orgs = data[data.length - 1].orgs.substr(1, data[data.length - 1].orgs.length - 2);
+                //
+                // $scope.geoJsonLayerString = "[" + $scope.streets + "," + $scope.buildings + "," + $scope.orgs + "]";
+                // console.log("!!!!!!!!!!!!!!!!  " + $scope.geoJsonLayerString + "    !!!!!!!!!!!!!!!!  ");
+                //
+                // console.log("STREETSTEST" + $scope.streets);
+                // console.log("BUILDINGSTEST" + $scope.buildings);
+                // console.log("ORGSTEST" + $scope.orgs);
 
-                $scope.geoJsonLayerString = "[" + $scope.streets + "," + $scope.buildings + "," + $scope.orgs + "]";
-                console.log("!!!!!!!!!!!!!!!!  " + $scope.geoJsonLayerString + "    !!!!!!!!!!!!!!!!  ");
-
-                console.log("STREETSTEST" + $scope.streets);
-                console.log("BUILDINGSTEST" + $scope.buildings);
-                console.log("ORGSTEST" + $scope.orgs);
+                $scope.streets = data[data.length - 1].streets;
+                $scope.geoJsonLayerString = $scope.streets;
 
                 initMap($scope.geoJsonLayerString);
             }, function (error) {

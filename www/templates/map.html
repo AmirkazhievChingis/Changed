@@ -1,4 +1,16 @@
 <ion-view view-title="">
+    <ion-nav-buttons side="primary">
+        <div class="item-input-inset">
+            <label class="item-input-wrapper">
+                <i class="icon ion-ios-search placeholder-icon"></i>
+                <input type="search" placeholder="Search" ng-model="searchQuery" ng-change="modal.show()">
+            </label>
+            <!--<ion-list>-->
+                <!--<ion-item ng-repeat="object in searchGeoObjs | filter:searchQuery">-->
+                <!--</ion-item>-->
+            <!--</ion-list>-->
+        </div>
+    </ion-nav-buttons>
   <ion-content scroll="false" data-tap-disabled="true">
     <div id="map"></div>
   </ion-content>
