@@ -3,7 +3,7 @@
  */
 angular.module('starter.services', ['ngCordova', 'ngResource', 'starter.constants'])
 
-    .factory('GeoLayer', function ($timeout, $q, $http, GeoApiService, $cordovaFile, streetsURLTest, buildingsURLTest, orgsURLTest) {
+    .factory('GeoLayer', function ($timeout, $q, $http, GeoApiService, $cordovaFile, streetsURL, buildingsURL, orgsURL) {
 
         var jsonObj = {
             streets: "",
